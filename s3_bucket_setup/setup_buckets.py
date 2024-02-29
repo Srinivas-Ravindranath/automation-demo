@@ -40,11 +40,10 @@ class SetupBuckets:
             Bucket=bucket_name, Prefix=key, Delimiter="/", MaxKeys=1
         )
 
-        if "Contents" in object:
-            logging.warning(Fore.RED + f"Object key {key} already exists, skipping creation")
-            return
+        if not "Contents" in object:
+            self.s3_client.put_object(ACL="private", Bucket=bucket_name, Key=key)
 
-        self.s3_client.put_object(ACL="private", Bucket=bucket_name, Key=key)
+        logging.warning(Fore.RED + f"Object key {key} already exists, skipping creation")
 
         logging.info(
             Fore.GREEN + "Successfully created bucket and all objects with names \n",
