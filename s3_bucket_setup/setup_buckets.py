@@ -19,10 +19,18 @@ class SetupBuckets:
 
         try:
             response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
+            print(response)
             if response:
-                logging.info(f"Created bucket {bucket_name} successfully")
+                logging.info(Fore.GREEN  + f"Created bucket {bucket_name} successfully")
+
         except self.s3_client.exceptions.BucketAlreadyExists as e:
-            logging.error(
+            logging.warning(
+                Fore.RED
+                + f"Bucket {bucket_name} already exists, skipping bucket creation.."
+            )
+
+        except self.s3_client.exceptions.BucketAlreadyOwnedByYou as e:
+            logging.warning(
                 Fore.RED
                 + f"Bucket {bucket_name} already exists, skipping bucket creation.."
             )
@@ -34,7 +42,7 @@ class SetupBuckets:
         )
 
         if "Contents" in object:
-            logging.info(f"Object key {key} already exists, skipping creation")
+            logging.warning(Fore.RED + f"Object key {key} already exists, skipping creation")
             return
 
         self.s3_client.put_object(ACL="private", Bucket=bucket_name, Key=key)
