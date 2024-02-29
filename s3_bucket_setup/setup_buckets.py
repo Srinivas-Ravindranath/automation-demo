@@ -19,9 +19,8 @@ class SetupBuckets:
 
         try:
             response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
-            print(response)
             if response:
-                logging.info(Fore.GREEN  + f"Created bucket {bucket_name} successfully")
+                logging.info(Fore.GREEN + f"Created bucket {bucket_name} successfully")
 
         except self.s3_client.exceptions.BucketAlreadyExists as e:
             logging.warning(
