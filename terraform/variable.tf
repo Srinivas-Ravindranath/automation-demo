@@ -109,12 +109,12 @@ variable "asg_max_size" {
 }
 variable "asg_min_size" {
   type        = string
-  default     = "2"
+  default     = "0"
   description = "The minimum number of ec2 instances that need to be running in the autoscaling group"
 }
 variable "desired_capacity" {
   type        = string
-  default     = "2"
+  default     = "0"
   description = "The number of EC2 instances that have to be up and running at all times when auto scaling is active"
 }
 
