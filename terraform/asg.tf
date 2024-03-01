@@ -85,7 +85,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_launch_template" "web_server_template" {
   name_prefix   = var.launch_template_prefix
-  image_id      = data.aws_ami.ubuntu.image_id
+  image_id      = "ami-0eb45246cba02871b"
   instance_type = var.instance_type
 
   block_device_mappings {
