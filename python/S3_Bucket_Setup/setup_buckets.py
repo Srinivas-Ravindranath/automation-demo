@@ -1,3 +1,9 @@
+"""
+Script to setup the S3 bucket required to store the terraform state buckets
+Not created with terraform as there no place to store state file
+"""
+
+
 import json
 import logging
 
@@ -16,11 +22,19 @@ logger.addHandler(ch)
 
 
 class SetupBuckets:
+    """
+    Class to setup the S3 bucket required to store the terraform state file
+    """
     def __init__(self, region: str):
         self.region = region
         self.s3_client = boto3.client("s3", region_name=region)
 
-    def setup_s3_buckets(self):
+    def setup_s3_buckets(self) -> None:
+        """
+        Create the S3 bucket required to store the terraform state and also
+        the S3 key path
+        :return: None
+        """
         bucket_name = f"cloud-computing-6907-81-terraform-state-bucket"
 
         try:
