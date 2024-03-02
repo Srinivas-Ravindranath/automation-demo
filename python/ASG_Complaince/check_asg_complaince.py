@@ -12,6 +12,7 @@ from typing import Dict
 import boto3
 
 from Logger.formatter import CustomFormatter
+from JenkinsApi.jenkinsapi import  JenkinsApi
 
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
@@ -51,7 +52,13 @@ class GetLatestAMI:
         :return: dict
         """
         filtered_tags = {}
-        required_tags = ["image-name", "owners", "root-device", "virtualization-type"]
+        required_tags = [
+            "image-name",
+            "owners",
+            "root-device",
+            "virtualization-type",
+            "jenkins_job_name",
+        ]
         try:
             for tag in tags:
                 if tag["Key"] in required_tags:
@@ -154,6 +161,7 @@ class GetLatestAMI:
                     "owners",
                     "root-device",
                     "virtualization-type",
+                    "jenkins_job_name",
                 ]
                 if not all(key in filtered_tags for key in required_tags):
                     logger.warning(
@@ -172,7 +180,12 @@ class GetLatestAMI:
 
                 for instances in asg[asg_name]["asg_instances"]:
                     if instances["image_id"] != latest_ami:
-                        non_complaint_asgs.append(instances["instance_id"])
+                        non_complaint_asgs.append(
+                            {
+                                "instance-id": instances["instance_id"],
+                                "jenkins_job_name": filtered_tags["jenkins_job_name"],
+                            }
+                        )
 
                 if not non_complaint_asgs:
                     logger.info(f"No Non Complaint AMIs Found for ASG {asg_name}")
@@ -200,8 +213,17 @@ class GetLatestAMI:
             TopicArn=self.sns_notifier_arn,
             Subject="AMI compliance report for Auto Scaling Groups",
             Message=f"Non Complaint AMIs found running in the region {self.region}, "
-            f"listing non-complaint ASG below: \n {json.dumps(self.non_complaint_asgs, indent=4, default=str)}",
+            f"listing non-complaint ASG below: \n {json.dumps(self.non_complaint_asgs, indent=4, default=str)} \n"
+            f"The jenkins jobs mentioned in the AMI compliance report have been started to update AMI,"
+            f"please approve requests for the terraform deployment"
         )
+
+        for asg in self.non_complaint_asgs.keys():
+            token_name = "testtoken"
+            parameter = {}
+            jenkins_obj = JenkinsApi()
+            output = jenkins_obj.build_job(self.non_complaint_asgs[asg][0]["jenkins_job_name"], parameter, token_name)
+            print("Jenkins Build URL: {}".format(output['url']))
 
 
 if __name__ == "__main__":
