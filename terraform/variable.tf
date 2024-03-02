@@ -169,3 +169,8 @@ variable "image_details" {
     }
   EOT
 }
+
+variable "jenkins_job_name" {
+  type = string
+  description = "The name of the jenkins job that built the deployment"
+}
