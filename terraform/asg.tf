@@ -57,6 +57,12 @@ resource "aws_autoscaling_group" "demo_servers" {
     propagate_at_launch = false
   }
 
+  tag {
+    key                 = "jenkins_job_name"
+    value               = var.jenkins_job_name
+    propagate_at_launch = false
+  }
+
     target_group_arns = [aws_lb_target_group.website_target_group.arn]
 
 }
@@ -85,7 +91,7 @@ data "aws_ami" "ubuntu" {
 
 resource "aws_launch_template" "web_server_template" {
   name_prefix   = var.launch_template_prefix
-  image_id      = data.aws_ami.ubuntu.image_id
+  image_id      = "ami-0eb45246cba02871b"
   instance_type = var.instance_type
 
   block_device_mappings {
