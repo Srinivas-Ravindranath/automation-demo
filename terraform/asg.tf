@@ -56,12 +56,12 @@ resource "aws_autoscaling_group" "demo_servers" {
     value               = var.image_details["owners"]
     propagate_at_launch = false
   }
-
-  tag {
-    key                 = "jenkins_job_name"
-    value               = var.jenkins_job_name
-    propagate_at_launch = false
-  }
+#
+#  tag {
+#    key                 = "jenkins_job_name"
+#    value               = var.jenkins_job_name
+#    propagate_at_launch = false
+#  }
 
     target_group_arns = [aws_lb_target_group.website_target_group.arn]
 
