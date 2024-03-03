@@ -46,17 +46,17 @@ resource "aws_internet_gateway" "public_subnet_gateway" {
   }
 }
 
-#resource "aws_nat_gateway" "private_subnet_gateway" {
-#  depends_on = [aws_internet_gateway.public_subnet_gateway]
-#
-#  allocation_id = aws_eip.nat_gateway_ip.id
-#  subnet_id     = element(aws_subnet.public_subnet.*.id, 0)
-#
-#  tags = {
-#    Name = "Customer Managed Nat Gateway"
-#  }
-#
-#}
+resource "aws_nat_gateway" "private_subnet_gateway" {
+  depends_on = [aws_internet_gateway.public_subnet_gateway]
+
+  allocation_id = aws_eip.nat_gateway_ip.id
+  subnet_id     = element(aws_subnet.public_subnet.*.id, 0)
+
+  tags = {
+    Name = "Customer Managed Nat Gateway"
+  }
+
+}
 
 
 resource "aws_route_table" "public" {
@@ -80,11 +80,11 @@ resource "aws_route" "public_internet_gateway" {
   gateway_id             = aws_internet_gateway.public_subnet_gateway.id
 }
 
-#resource "aws_route" "private_nat_gateway" {
-#  route_table_id         = aws_route_table.private.id
-#  destination_cidr_block = "0.0.0.0/0"
-#  gateway_id             = aws_nat_gateway.private_subnet_gateway.id
-#}
+resource "aws_route" "private_nat_gateway" {
+  route_table_id         = aws_route_table.private.id
+  destination_cidr_block = "0.0.0.0/0"
+  gateway_id             = aws_nat_gateway.private_subnet_gateway.id
+}
 
 resource "aws_route_table_association" "public" {
   count          = length(var.public_subnets_cidr)

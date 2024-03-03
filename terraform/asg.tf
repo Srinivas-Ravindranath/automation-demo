@@ -5,7 +5,7 @@ resource "aws_placement_group" "demo_server_placement_group" {
 
 
 resource "aws_autoscaling_group" "demo_servers" {
-  #  depends_on = [aws_lb_target_group.website_target_group]
+    depends_on = [aws_lb_target_group.website_target_group]
 
   name                      = var.asg_name
   max_size                  = var.asg_max_size
