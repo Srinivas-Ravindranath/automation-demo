@@ -2,11 +2,6 @@ import jenkins
 import time
 import logging
 
-
-JENKINS_URL = "http://localhost:8080"
-JENKINS_USERNAME = "srinivas"
-JENKINS_PASSWORD = "NukeLocus98868"
-
 from Logger.formatter import CustomFormatter
 
 logger = logging.getLogger()
@@ -18,13 +13,14 @@ ch.setLevel(logging.DEBUG)
 ch.setFormatter(CustomFormatter())
 logger.addHandler(ch)
 
+
 class JenkinsApi:
-    def __init__(self):
-        self.jenkins_server = jenkins.Jenkins(JENKINS_URL, username=JENKINS_USERNAME, password=JENKINS_PASSWORD)
+    def __init__(self, jenkins_url, jenkins_username, jenkins_password):
+        self.jenkins_server = jenkins.Jenkins(jenkins_url, username=jenkins_username, password=jenkins_password)
         user = self.jenkins_server.get_whoami()
         version = self.jenkins_server.get_version()
-        logger.info ("Jenkins Version: {}".format(version))
-        logger.info ("Jenkins User: {}".format(user['id']))
+        logger.info("Jenkins Version: {}".format(version))
+        logger.info("Jenkins User: {}".format(user['id']))
 
     def build_job(self, name, parameters=None, token=None):
         next_build_number = self.jenkins_server.get_job_info(name)['nextBuildNumber']
@@ -32,4 +28,3 @@ class JenkinsApi:
         time.sleep(10)
         build_info = self.jenkins_server.get_build_info(name, next_build_number)
         return build_info
-
