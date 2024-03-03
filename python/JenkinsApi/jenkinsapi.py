@@ -32,7 +32,7 @@ class JenkinsApi:
         user = self.jenkins_server.get_whoami()
         version = self.jenkins_server.get_version()
         logger.info(f"Jenkins Version: {version}")
-        logger.info(f"Jenkins User: {user[id]}")
+        logger.info(f"Jenkins User: {user['id']}")
 
     def build_job(self, name, parameters=None, token=None) -> List:
         """

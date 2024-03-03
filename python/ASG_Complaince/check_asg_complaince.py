@@ -6,6 +6,7 @@ AMI's
 TODO:
 1) Fix instance attributes in __init__ function
 2) Improve Code quality
+3) Figure out why logger is outputting twice to console
 """
 
 import json
