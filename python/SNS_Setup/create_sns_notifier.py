@@ -8,6 +8,7 @@ import boto3
 
 from Logger.formatter import CustomFormatter
 
+# Logger setup
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -35,7 +36,7 @@ class CreateSnsNotifier:
         """
         Checks if the SNS Topic exists or not
         :param topic_arn:
-        :return:
+        :return: bool
         """
 
         try:
@@ -45,6 +46,8 @@ class CreateSnsNotifier:
                 return True
         except self.sns_client.exceptions.NotFoundException:
             return False
+
+        return False
 
     def sns_topic_subscription_exists(self, topic_arn, email: str) -> bool:
         """
@@ -84,9 +87,7 @@ class CreateSnsNotifier:
             sns_topic_arn = response["TopicArn"]
 
             if not sns_topic_arn:
-                print(
-                    f"Unable to create SNS topic {sns_name}, please try again"
-                )
+                print(f"Unable to create SNS topic {sns_name}, please try again")
 
             print(
                 f'Successfully created cloud-demo notifier topic: {response["TopicArn"]}'
@@ -105,7 +106,8 @@ class CreateSnsNotifier:
 
             except self.sns_client.exceptions.NotFoundException:
                 print(
-                    "Unable to add subscription to cloud-demo-notifier, please check if topic ARN is correct"
+                    "Unable to add subscription to cloud-demo-notifier, "
+                    "please check if topic ARN is correct"
                 )
 
 

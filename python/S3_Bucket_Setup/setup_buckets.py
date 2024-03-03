@@ -3,7 +3,6 @@ Script to setup the S3 bucket required to store the terraform state buckets
 Not created with terraform as there no place to store state file
 """
 
-
 import json
 import logging
 
@@ -11,6 +10,7 @@ import boto3
 
 from Logger.formatter import CustomFormatter
 
+# Logger setup
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -25,6 +25,7 @@ class SetupBuckets:
     """
     Class to setup the S3 bucket required to store the terraform state file
     """
+
     def __init__(self, region: str):
         self.region = region
         self.s3_client = boto3.client("s3", region_name=region)
@@ -35,7 +36,7 @@ class SetupBuckets:
         the S3 key path
         :return: None
         """
-        bucket_name = f"cloud-computing-6907-81-terraform-state-bucket"
+        bucket_name = "cloud-computing-6907-81-terraform-state-bucket"
 
         try:
             response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
@@ -43,23 +44,24 @@ class SetupBuckets:
                 logging.info(f"Created bucket {bucket_name} successfully")
 
         # Doesnt work with us-east-1 region(https://github.com/boto/boto3/issues/4023)
-        except self.s3_client.exceptions.BucketAlreadyExists as e:
+        except self.s3_client.exceptions.BucketAlreadyExists:
             logging.warning(
                 f"Bucket {bucket_name} already exists, skipping bucket creation.."
             )
 
-        except self.s3_client.exceptions.BucketAlreadyOwnedByYou as e:
+        except self.s3_client.exceptions.BucketAlreadyOwnedByYou:
             logging.warning(
                 f"Bucket {bucket_name} already exists, skipping bucket creation.."
             )
 
         key = "demo_deployment/"
 
-        object = self.s3_client.list_objects(
+        # Check if the S3 key already exists else skip key creation
+        s3_object = self.s3_client.list_objects(
             Bucket=bucket_name, Prefix=key, Delimiter="/", MaxKeys=1
         )
 
-        if not "Contents" in object:
+        if not "Contents" in s3_object:
             self.s3_client.put_object(ACL="private", Bucket=bucket_name, Key=key)
 
         logging.warning(f"Object key {key} already exists, skipping creation")

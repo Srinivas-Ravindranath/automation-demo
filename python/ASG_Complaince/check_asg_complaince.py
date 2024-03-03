@@ -2,6 +2,10 @@
 This script goes through all the Autoscaling Groups and
 returns a list of all asg instances running non complaint
 AMI's
+
+TODO:
+1) Fix instance attributes in __init__ function
+2) Improve Code quality
 """
 
 import json
@@ -15,6 +19,7 @@ import boto3
 from Logger.formatter import CustomFormatter
 from JenkinsApi.jenkinsapi import JenkinsApi
 
+# Logger setup
 logger = logging.getLogger()
 logger.setLevel(logging.INFO)
 
@@ -37,10 +42,12 @@ class GetLatestAMI:
         self.sns_client = boto3.client("sns", region_name=region)
         self.sts_client = boto3.client("sts")
         self.sns_name = "cloud-demo-notifier"
+        # Get account id for the AWS account
         self.account_id = self.sts_client.get_caller_identity()["Account"]
         self.sns_notifier_arn = (
             f"arn:aws:sns:{region}:{self.account_id}:{self.sns_name}"
         )
+        # Replace the url to whichever port setup by user
         self.jenkins_url = "http://localhost:8080"
         parser = argparse.ArgumentParser(description="Get Jenkins Credentials")
         parser.add_argument(
@@ -120,7 +127,9 @@ class GetLatestAMI:
             )
             latest_ami = sorted(
                 images["Images"], key=lambda x: x["CreationDate"], reverse=True
-            )[0]["ImageId"]
+            )[0][
+                "ImageId"
+            ]  # Sort AMI images by latest date(default returns all in ascending order of date)
 
             return latest_ami
 
@@ -166,7 +175,7 @@ class GetLatestAMI:
                         }
                     )
             except KeyError as e:
-                logger.error("Unexpected Key:", e)
+                logger.error(f"Unexpected Key: {e}")
                 exit(1)
 
         self.asg_information["AutoScalingGroups"] = asg_info
@@ -191,7 +200,8 @@ class GetLatestAMI:
                 ]
                 if not all(key in filtered_tags for key in required_tags):
                     logger.warning(
-                        f"Invalid tagging for resource, unable to determine for asg, skipping {asg_name}"
+                        f"Invalid tagging for resource, "
+                        f"unable to determine for tags for asg, skipping {asg_name}"
                     )
                     continue
 
@@ -221,35 +231,43 @@ class GetLatestAMI:
 
         if not self.non_complaint_asgs:
             logger.info(
-                "All ASG are running the latest AMI for the specified OS, No non complaint resources found."
+                "All ASG are running the latest AMI for the specified OS, "
+                "No non complaint resources found."
             )
+            # Publish to SNS notifier
             self.sns_client.publish(
                 TopicArn=self.sns_notifier_arn,
                 Subject="AMI compliance report for Auto Scaling Groups",
-                Message="All ASG are running the latest AMI for the specified OS, No non complaint resources found.",
+                Message="All ASG are running the latest AMI for the specified OS, "
+                "No non complaint resources found.",
             )
             return
 
         logger.info(
             f"Non Complaint AMIs found running in the region {self.region}, "
-            f"listing non-complaint ASG below: \n {json.dumps(self.non_complaint_asgs, indent=4, default=str)}"
+            f"listing non-complaint ASG below: "
+            f"\n {json.dumps(self.non_complaint_asgs, indent=4, default=str)}"
         )
 
+        # Call all related jenkins jobs for updating the AMI on ASG
         for asg in self.non_complaint_asgs.keys():
             output = self.jenkins_api.build_job(
                 self.non_complaint_asgs[asg][0]["jenkins_job_name"],
             )
-            print("Jenkins Build URL: {}".format(output["url"]))
+            logger.info(f'Jenkins Build URL: {output["url"]}')
             self.triggered_jobs[asg] = output["url"]
 
+        # Publish to SNS notifier
         self.sns_client.publish(
             TopicArn=self.sns_notifier_arn,
             Subject="AMI compliance report for Auto Scaling Groups",
             Message=f"Non Complaint AMIs found running in the region {self.region}, "
-            f"listing non-complaint ASG below: \n {json.dumps(self.non_complaint_asgs, indent=4, default=str)} \n"
+            f"listing non-complaint ASG below: "
+            f"\n {json.dumps(self.non_complaint_asgs, indent=4, default=str)} \n"
             f"The jenkins jobs mentioned in the AMI compliance report have been started to update AMI,"
-            f"please approve requests for the terraform deployment to update the ami, the following Jenkins job have "
-            f"been triggered below: \n {json.dumps(self.triggered_jobs, indent=4,default=str)}"
+            f"please approve requests for the terraform deployment to update the ami, "
+            f"the following Jenkins job have been triggered below: "
+            f"\n {json.dumps(self.triggered_jobs, indent=4,default=str)}",
         )
 
 
