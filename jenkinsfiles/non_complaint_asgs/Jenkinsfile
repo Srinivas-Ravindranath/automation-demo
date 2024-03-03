@@ -1,0 +1,48 @@
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+        ansiColor('xterm')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            // Pull code from github
+            steps {
+                script {
+                    dir('automation-demo') {
+                        git branch: 'main',
+                           credentialsId: 'GITHUB_ACCESS_KEY',
+                           url: 'git@github.com:Srinivas-Ravindranath/automation-demo.git'
+                    }
+                }
+            }
+        }
+        stage('Setup Virtual Environment and Run Script') {
+            steps {
+                script {
+                    // Create a python virtualenv and call the python script
+                     withCredentials([usernamePassword(credentialsId: 'JENKINS_LOGIN_CREDENTIALS', usernameVariable: 'jenkinsUser', passwordVariable: 'jenkinsPass')]) {
+                         dir('automation-demo/python') {
+                            sh '''
+                                python3 -m venv .venv
+                                source .venv/bin/activate
+                                pip3 install -r requirements.txt
+                                export PYTHONPATH="$PYTHONPATH:$PWD"
+                                python3 SNS_Setup/create_sns_notifier.py 
+                                python3 ASG_Complaince/check_asg_complaince.py --jenkinsUser ${jenkinsUser} --jenkinsPass ${jenkinsPass}
+                            '''
+                         }
+                     }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs() // Clean workspace so for no conflicts
+        }
+    }
+}
