@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    options {
+        // Clean workspace before each build
+        skipDefaultCheckout(true)
+        ansiColor('xterm')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            // Pull code from github
+            steps {
+                script {
+                    dir('automation-demo') {
+                        git branch: 'main',
+                           credentialsId: 'GITHUB_ACCESS_KEY',
+                           url: 'git@github.com:Srinivas-Ravindranath/automation-demo.git'
+                    }
+                }
+            }
+        }
+        stage('Setup Virtual Environment and Run Script') {
+            steps {
+                script {
+                    // Create a python env and call the python script
+                     dir('automation-demo/python') {
+                        sh '''
+                            python3 -m venv .venv
+                            source .venv/bin/activate
+                            pip3 install -r requirements.txt
+                            export PYTHONPATH="$PYTHONPATH:$PWD" 
+                            python3 S3_Bucket_Setup/setup_buckets.py
+                        '''
+                    }
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            cleanWs() // Clean workspace after every run
+        } 
+    }
+}
