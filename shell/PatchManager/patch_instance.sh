@@ -7,9 +7,8 @@ msrc_severity=$2
 classification=$3
 products=$4
 approve_after_days="${5:-7}"
-maintenance_window_cron=$6
-baseline_name=$7
-region=$8
+baseline_name=$6
+region=$7
 
 #show_help() {
 #    echo "Usage: $0 [OPTIONS]"
@@ -60,10 +59,11 @@ aws ssm register-patch-baseline-for-patch-group \
   --no-cli-pager
 echo "Successfully created the Patch Baseline group custom-patch-for-${os_type}"
 
+# We have to hardcode cron()expression as Jenkins cannot parse it
 echo "Creating a batch pipeline maintenance window with cron ${maintenance_window_cron}"
 window_id=$(aws ssm create-maintenance-window \
   --name "window-${os_type}" \
-  --schedule "${maintenance_window_cron}" \
+  --schedule "cron(0 0 22 ? * TUE *)" \
   --duration 1 \
   --cutoff 0 \
   --no-allow-unassociated-targets \

@@ -32,10 +32,10 @@ resource "aws_subnet" "private_subnet" {
 }
 
 
-#resource "aws_eip" "nat_gateway_ip" {
-#  depends_on = [aws_internet_gateway.public_subnet_gateway]
-#  domain     = "vpc"
-#}
+resource "aws_eip" "nat_gateway_ip" {
+  depends_on = [aws_internet_gateway.public_subnet_gateway]
+  domain     = "vpc"
+}
 
 
 resource "aws_internet_gateway" "public_subnet_gateway" {
