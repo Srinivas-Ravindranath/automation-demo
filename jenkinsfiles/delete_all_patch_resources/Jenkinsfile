@@ -33,8 +33,8 @@ pipeline {
                         sh '''
                         export PATH=$PATH:/usr/local/bin/:/opt/homebrew/bin/
                         ./remove-all-mw.sh  $region
-                        ./remove-patch-groups $region
-                        ./remove-all-patch-baselines $region
+                        ./remove-patch-groups.sh $region
+                        ./remove-all-patch-baselines.sh $region
                         '''
                     }
                 }
