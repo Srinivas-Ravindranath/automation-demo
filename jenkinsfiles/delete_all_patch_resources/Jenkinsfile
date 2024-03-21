@@ -1,0 +1,44 @@
+pipeline {
+    agent any
+
+    options {
+        // Clean workspace before each build
+        skipDefaultCheckout(true)
+        ansiColor('xterm')
+    }
+
+
+    parameters {
+        string(name: 'region', defaultValue: 'us-east-1', description: 'Target deployment region (e.g., us-east-1, eu-west-2)')
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                script {
+                    dir('automation-demo') {
+                        git branch: 'main',
+                           credentialsId: 'GITHUB_ACCESS_KEY',
+                           url: 'git@github.com:Srinivas-Ravindranath/automation-demo.git'
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    dir('automation-demo/shell/PatchManager') {
+                        sh '''
+                        export PATH=$PATH:/usr/local/bin/:/opt/homebrew/bin/
+                        ./remove-all-mw.sh  $region
+                        ./remove-patch-groups $region
+                        ./remove-all-patch-baselines $region
+                        '''
+                    }
+                }
+            }
+        }
+    }
+}

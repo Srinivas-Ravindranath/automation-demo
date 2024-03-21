@@ -1,0 +1,57 @@
+pipeline {
+    agent any
+
+    options {
+        // Clean workspace before each build
+        skipDefaultCheckout(true)
+        ansiColor('xterm')
+    }
+
+
+    parameters {
+        string(name: 'os_type', defaultValue: 'WINDOWS', description: 'The type of operating system (e.g., linux, windows)')
+        string(name: 'msrc_severity', defaultValue: 'Critical,Important', description: 'MSRC severity rating (e.g., Critical, Important)')
+        string(name: 'classification', defaultValue: 'SecurityUpdates,Updates,ServicePacks,UpdateRollups,CriticalUpdates', description: 'Additional classification for the update or patch')
+        string(name: 'products', defaultValue: 'Windows10,Windows7', description: 'Comma-separated list of affected products')
+        string(name: 'approve_after_days', defaultValue: '7', description: 'Number of days before automatic approval (if no action taken)')
+        string(name: 'baseline_name', defaultValue: 'test-baseline', description: 'Name of the baseline to apply')
+        string(name: 'region', defaultValue: 'us-east-1', description: 'Target deployment region (e.g., us-east-1, eu-west-2)')
+    }
+
+    stages {
+
+        stage('Checkout Code') {
+            steps {
+                script {
+                    dir('automation-demo') {
+                        git branch: 'main',
+                           credentialsId: 'GITHUB_ACCESS_KEY',
+                           url: 'git@github.com:Srinivas-Ravindranath/automation-demo.git'
+                    }
+                }
+            }
+        }
+
+        stage('Build') {
+            steps {
+                script {
+                    dir('automation-demo/shell/PatchManager') {
+                        sh '''
+                        export PATH=$PATH:/usr/local/bin/:/opt/homebrew/bin/
+                        ./patch_instance.sh $os_type $msrc_severity $classification $products $approve_after_days $baseline_name $region
+                        '''
+                    }
+                }
+            }
+        }
+
+        stage('Trigger deletion jobs') {
+            steps {
+                build job: 'delete_all_patch_resources', parameters: [
+                    string(name: 'region', value: "${region}"),
+                ], wait: true
+            }
+        }
+
+    }
+}

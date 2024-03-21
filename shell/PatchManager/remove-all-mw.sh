@@ -12,14 +12,6 @@ delete_maintenance_window() {
 # Get a list of all maintenance window IDs
 window_ids=$(aws ssm describe-maintenance-windows --query 'WindowIdentities[*].WindowId' --region "${region}" --output text)
 
-# Confirmation prompt
-echo "This script will delete ALL maintenance windows in your account."
-read -p "Are you sure you want to proceed? (type 'yes' to confirm): " confirmation
-if [ "$confirmation" != "yes" ]; then
-  echo "Operation cancelled."
-  exit 1
-fi
-
 # Iterate through each maintenance window ID and delete it
 for window_id in $window_ids; do
   delete_maintenance_window $window_id
