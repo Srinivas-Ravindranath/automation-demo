@@ -59,7 +59,7 @@ resource "aws_autoscaling_group" "demo_servers" {
 
   tag {
     key                 = "jenkins_job_name"
-    value               = var.jenkins_job_name
+    value               = "cloud_demo_deployment"
     propagate_at_launch = false
   }
 
