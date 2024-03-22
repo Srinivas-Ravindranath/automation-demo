@@ -27,13 +27,13 @@ resource "aws_lb_target_group" "website_target_group" {
   vpc_id   = aws_vpc.project_vpc.id
 }
 
-#resource "aws_lb_listener" "load_balancer_listener" {
-#  load_balancer_arn = aws_lb.website_load_balancer.arn
-#  port = 80
-#  protocol = "HTTP"
-#
-#  default_action {
-#    target_group_arn = aws_lb_target_group.website_target_group.arn
-#    type = "forward"
-#  }
-#}
+resource "aws_lb_listener" "load_balancer_listener" {
+  load_balancer_arn = aws_lb.website_load_balancer.arn
+  port = 80
+  protocol = "HTTP"
+
+  default_action {
+    target_group_arn = aws_lb_target_group.website_target_group.arn
+    type = "forward"
+  }
+}
