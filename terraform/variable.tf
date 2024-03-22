@@ -114,7 +114,7 @@ variable "asg_min_size" {
 }
 variable "desired_capacity" {
   type        = string
-  default     = "0"
+  default     = "3"
   description = "The number of EC2 instances that have to be up and running at all times when auto scaling is active"
 }
 
