@@ -4,7 +4,7 @@ This project demonstrates how we can setup a basic automation using Jenkins and 
 
 <h3>Prerequisites:</h3>
 1) <b>AWS Cli:</b> <br>
-    ```angular2html
+   ```angular2html
     https://docs.aws.amazon.com/cli/latest/userguide/getting-started-install.html
     ```
     
