@@ -1,9 +1,11 @@
+# Create an ASG with a placement group which is a logical grouping of instances within a single Availability Zone.
 resource "aws_placement_group" "demo_server_placement_group" {
   name     = var.placement_group_name
   strategy = var.placement_group_type
 }
 
-
+# Create an ASG which is a collection of EC2 instances that are treated as a logical grouping
+# for the purposes of automatic scaling and management.
 resource "aws_autoscaling_group" "demo_servers" {
     depends_on = [aws_lb_target_group.website_target_group]
 
@@ -88,7 +90,7 @@ data "aws_ami" "ubuntu" {
   owners = [var.image_details["owners"]]
 }
 
-
+# CReate a launch template which acts as a blueprint for the instances in the ASG
 resource "aws_launch_template" "web_server_template" {
   name_prefix   = var.launch_template_prefix
   image_id      = data.aws_ami.ubuntu.image_id

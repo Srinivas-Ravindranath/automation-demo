@@ -1,3 +1,4 @@
+# Ca security group that allows HTTP traffic inbound on the load balancer
 resource "aws_security_group" "allow_lb_traffic" {
   name        = "aws_lb_sec_group"
   description = "Allow http/https traffic inbound on the load balancer"
@@ -8,6 +9,7 @@ resource "aws_security_group" "allow_lb_traffic" {
   }
 }
 
+# Allow HTTPS traffic from the internet to the load balancer
 resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
   security_group_id = aws_security_group.allow_lb_traffic.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -16,6 +18,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4" {
   to_port           = 443
 }
 
+# Allow HTTP traffic from the internet to the load balancer
 resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4" {
   security_group_id = aws_security_group.allow_lb_traffic.id
   cidr_ipv4         = "0.0.0.0/0"
@@ -30,6 +33,7 @@ resource "aws_vpc_security_group_egress_rule" "allow_http_ipv4" {
   ip_protocol       = "-1"
 }
 
+# Create a security group that allows HTTP traffic inbound from the load balancer to the EC2 instance
 resource "aws_security_group" "allow_lb_traffic_instance" {
   name        = "allow_lb_traffic_instance"
   description = "Allow http/https traffic inbound from the load balancer to EC2 instance"
@@ -40,6 +44,7 @@ resource "aws_security_group" "allow_lb_traffic_instance" {
   }
 }
 
+# Allow HTTPS traffic from the load balancer to the EC2 instance
 resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4_instance" {
   security_group_id            = aws_security_group.allow_lb_traffic_instance.id
   referenced_security_group_id = aws_security_group.allow_lb_traffic.id
@@ -48,6 +53,7 @@ resource "aws_vpc_security_group_ingress_rule" "allow_https_ipv4_instance" {
   to_port                      = 443
 }
 
+# Allow HTTP traffic from the load balancer to the EC2 instance
 resource "aws_vpc_security_group_ingress_rule" "allow_http_ipv4_instance" {
   security_group_id            = aws_security_group.allow_lb_traffic_instance.id
   referenced_security_group_id = aws_security_group.allow_lb_traffic.id

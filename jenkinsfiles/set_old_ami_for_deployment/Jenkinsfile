@@ -1,0 +1,94 @@
+/*
+This Jenkinsfile is used to set the old AMI for the deployment for testing if the the set_old_ami_for_deployment Jenkinsfile is working as expected.
+*/
+
+pipeline {
+    agent any
+
+    options {
+        skipDefaultCheckout(true)
+        ansiColor('xterm')
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                script {
+                    dir('automation-demo') {
+                        git branch: 'private/srirav/old_ami',
+                        credentialsId: 'GITHUB_ACCESS_KEY',
+                        url: 'git@github.com:Srinivas-Ravindranath/automation-demo.git'
+                    }
+                }
+            }
+        }
+        stage('Install Terraform') {
+            steps {
+                script {
+                    dir('automation-demo/terraform') {
+                        sh '''
+                            mkdir tmp && cd tmp
+                            curl -fsSL https://releases.hashicorp.com/terraform/1.7.4/terraform_1.7.4_darwin_arm64.zip -o terraform.zip
+                            unzip terraform.zip
+                            chmod +x terraform
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Terraform Init') {
+            steps {
+                script {
+                    dir('automation-demo/terraform') {
+                        sh './tmp/terraform init'
+                    }
+                }
+            }
+        }
+        stage('Terraform Plan') {
+            steps {
+                script {
+                    dir('automation-demo/terraform') {
+                        sh '''
+                        ./tmp/terraform plan \
+                        -var "jenkins_job_name=${JOB_NAME}"
+                        '''
+                    }
+                }
+            }
+        }
+        stage('Approval') {
+            steps {
+                script {
+                    timeout(time: 15, unit: 'MINUTES') {
+                        input(
+                            id: 'approval',
+                            message: 'Review Terraform plan and approve to apply (15 minutes)',
+                            submitter: 'USER_ANY',
+                        )
+                    }
+                }
+            }
+        }
+        stage('Terraform Apply') {
+            steps {
+                script {
+                    dir('automation-demo/terraform') {
+                        sh '''
+                        ./tmp/terraform apply  \
+                        -var "jenkins_job_name=${JOB_NAME}" \
+                        -auto-approve
+                        '''
+                    }
+                }
+            }
+        }
+
+    }
+
+    post {
+        always {
+            cleanWs() // Clean workspace after pipeline execution
+        }
+    }
+}

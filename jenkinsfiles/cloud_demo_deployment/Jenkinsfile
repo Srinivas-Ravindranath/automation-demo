@@ -1,3 +1,6 @@
+/* This is a Jenkinsfile that is used to deploy the cloud infrastructure mentioned
+ in the diagrams->aws_arch.drawio using Terraform. */
+
 pipeline {
     agent any
     

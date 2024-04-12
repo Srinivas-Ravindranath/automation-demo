@@ -1,3 +1,7 @@
+/*
+This is a Jenkinsfile that is used to delete all the patch resources created by the create_patch_policy Jenkinsfile.
+*/
+
 pipeline {
     agent any
 

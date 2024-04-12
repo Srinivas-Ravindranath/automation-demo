@@ -1,3 +1,4 @@
+# Creates a AWS Load Balancer for distributing incoming traffic to multiple targets
 resource "aws_lb" "website_load_balancer" {
   name               = var.load_balancer_name
   internal           = false
@@ -20,6 +21,7 @@ resource "aws_lb" "website_load_balancer" {
   }
 }
 
+# Create a target group for the load balancer to which the load balancer can route requests
 resource "aws_lb_target_group" "website_target_group" {
   name     = var.target_group_name
   port     = 80
@@ -27,6 +29,7 @@ resource "aws_lb_target_group" "website_target_group" {
   vpc_id   = aws_vpc.project_vpc.id
 }
 
+# Create a listener for the load balancer to listen for incoming requests at the specified port
 resource "aws_lb_listener" "load_balancer_listener" {
   load_balancer_arn = aws_lb.website_load_balancer.arn
   port = 80

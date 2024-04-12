@@ -1,3 +1,8 @@
+/**
+ * Jenkinsfile for creating a patch policy using AWS Systems Manager Patch Manager. and creates a baseline for the patch policy.
+ which is used to define the rules for auto-approval of patches. on the specified maintenance window.
+ */
+
 pipeline {
     agent any
 

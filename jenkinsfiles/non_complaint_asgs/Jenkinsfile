@@ -1,3 +1,7 @@
+/*
+This Jenkinsfile is used to check if the Auto Scaling Groups (ASGs) are compliant and running the latest AMI's.
+*/
+
 pipeline {
     agent any
 
