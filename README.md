@@ -168,9 +168,9 @@ Follow the setup instructions on the browser to complete the setup.
 4) Enter the ID as <b>JENKINS_LOGIN_CREDENTIALS</b> and enter the username and password of the Jenkins login. <br>
 5) Click on the OK button to save the credentials.
 
-<h3>Setting up the Jenkins Pipeline</h3> <br>
+<h4>Setting up the Jenkins Pipeline</h4> <br>
 1) Click on the New Item option on the Jenkins dashboard. <br>
-2) Enter the item name as <b>Name of the Pipeline Job</b> and select the pipeline option. <br>
+2) Enter the item name as <b>name_of_the_job_you_want_to_create</b> and select the pipeline option. <br>
 3) Click on the OK button to create the pipeline. <br>
 4) In the pipeline section, paste one of the Jenkinfiles from the Jenkinsfiles directory. <br>
 5) Click on the Save button to save the pipeline. <br>
@@ -179,7 +179,7 @@ Follow the setup instructions on the browser to complete the setup.
 8) The pipeline will start and you can see the logs in the console output section. <br>
 
 
-<h3>What each Jenkinsfile does:</h3> <br>
+<h4>What each Jenkinsfile does:</h4> 
 1) <b>deploy_s3_bucket:</b> This Jenkinsfile is used to deploy an S3 bucket that is required for storing the terraform state files using python3 and boto3. <br>
 2) <b>cloud_demo_deployment:</b> This Jenkinsfile is used to deploy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform. <br>
 3) <b>cloud_demo_deployment_destroy:</b> This Jenkinsfile is used to destroy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform. <br>
