@@ -89,7 +89,7 @@ brew install terraform
 terraform --version
 ```
 Setting up terraform on Linux:
-```angular2html
+```
 #Install Dependencies
 
 sudo apt-get update && sudo apt-get install -y gnupg software-properties-common
@@ -124,13 +124,13 @@ sudo apt-get install terraform
 <h3>Setting up Jenkins</h3>
 
 <h4>Setting up Jenkins on Mac:</h4>
-```angular2html
+```
 brew install jenkins
 brew services start jenkins
 ```
 
 <h4>Setting up Jenkins on Linux:</h4>
-```angular2html
+```
 #Install Jenkins
 wget -q -O - https://pkg.jenkins.io/debian/jenkins.io.key | sudo apt-key add -
 sudo sh -c 'echo deb http://pkg.jenkins.io/debian-stable binary/ > \
@@ -146,13 +146,13 @@ Follow the setup instructions on the browser to complete the setup.
 
 <h4>Setting up Github ssh login:</h4>
 1) Create a ssh key using the below command: <br>
-    ```
+    ``
     ssh-keygen -t rsa -b 4096 -C "your_email"
-    ```
+    ``
 2) Copy the public key using the below command: <br>
-    ```
+    ``
    cat ~/.ssh/id_rsa.pub
-    ```
+    ``
 3) Go to the Github settings and click on the SSH and GPG keys option and click on the new SSH key option. <br>
 4) Paste the copied key in the key section and give a title to the key and click on the add SSH key button. <br>
 5) Now go to the Jenkins dashboard and click on the Manage Jenkins button. <br>
