@@ -52,6 +52,7 @@ This project demonstrates how we can setup a basic automation using Jenkins and 
 11) Enter the Access Key and Secret from the csv file downloaded from the console and use us-east-1 as the default region. <br>
     !["Creating_user"](./images/configure.png)
 12) Run the below query to test if the aws credentials are configured correctly.
+
     ```
     aws s3 ls --region us-east-1
     ```
@@ -155,10 +156,10 @@ Follow the setup instructions on the browser to complete the setup.
 <h3>Setting up the Jenkins Credentials</h3>
 
 <h4>Setting up Github ssh login:</h4>
-1) Create a ssh key using the below command
+1) Create a ssh key using the below command:
 
     ```
-    ssh-keygen -t rsa -b 4096 -C "your_email"
+   ssh-keygen -t rsa -b 4096 -C "your_email"
     ```
 2) Copy the public key using the below command: 
     
