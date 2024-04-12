@@ -157,7 +157,7 @@ Follow the setup instructions on the browser to complete the setup.
 
 <h4>Setting up Github ssh login:</h4>
 1) Create a ssh key using the below command
-
+    
     ```
     ssh-keygen -t rsa -b 4096 -C "your_email"
     ```
