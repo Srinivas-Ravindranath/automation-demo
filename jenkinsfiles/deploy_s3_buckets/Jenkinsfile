@@ -11,6 +11,10 @@ pipeline {
         ansiColor('xterm')
     }
 
+    parameters {
+        string(name: 'email', defaultValue: '', description: 'email address to setup the SNS notification and send alerts')
+    }
+
     stages {
         stage('Checkout Code') {
             // Pull code from github
@@ -35,6 +39,7 @@ pipeline {
                             pip3 install -r requirements.txt
                             export PYTHONPATH="$PYTHONPATH:$PWD" 
                             python3 S3_Bucket_Setup/setup_buckets.py
+                            python3 SNS_Setup/setup_sns.py --email ${email}
                         '''
                     }
                 }

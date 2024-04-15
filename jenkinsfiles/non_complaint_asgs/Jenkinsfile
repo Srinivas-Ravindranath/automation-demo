@@ -34,7 +34,6 @@ pipeline {
                                 source .venv/bin/activate
                                 pip3 install -r requirements.txt
                                 export PYTHONPATH="$PYTHONPATH:$PWD"
-                                python3 SNS_Setup/create_sns_notifier.py 
                                 python3 ASG_Complaince/check_asg_complaince.py --jenkinsUser ${jenkinsUser} --jenkinsPass ${jenkinsPass}
                             '''
                          }

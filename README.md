@@ -170,9 +170,14 @@ Follow the setup instructions on the browser to complete the setup.
 3) Go to the Github settings and click on the SSH and GPG keys option and click on the new SSH key option. <br>
 4) Paste the copied key in the key section and give a title to the key and click on the add SSH key button. <br>
 5) Now go to the Jenkins dashboard and click on the Manage Jenkins button. <br>
+    !["Creating_user"](./images/manage_jenkins.png)
 6) Click on the Manage Credentials option and click on the global credentials domain. <br>
+    !["Creating_user"](./images/manage_credentials.png)
+    !["Creating_user"](./images/credentials_setup.png)
 7) Click on the Add Credentials option and select the SSH Username with private key option. <br>
+    !["Creating_user"](./images/ssh.png)
 8) Enter the username as <b>GITHUB_ACCESS_KEY</b> and select the private key as the key option and paste the private key in the key section. <br>
+    !["Creating_user"](./images/credentials_ssh.png)
 9) Click on the OK button to save the credentials. <br>
 
 <h4>Setting up Jenkins Credentials</h4> 
@@ -184,14 +189,30 @@ Follow the setup instructions on the browser to complete the setup.
 
 <h4>Setting up the Jenkins Pipeline</h4> 
 1) Click on the New Item option on the Jenkins dashboard. <br>
-2) Enter the item name as <b>name_of_the_job_you_want_to_create</b> and select the pipeline option. <br>
+    !["Creating_user"](./images/adding_a_jenkins_job.png)
+2) Enter the name for the job and select the pipeline option. <br>
+    !["Creating_user"](./images/create_job.png)
 3) Click on the OK button to create the pipeline. <br>
 4) In the pipeline section, paste one of the Jenkinfiles from the Jenkinsfiles directory. <br>
+    !["Creating_user"](./images/add_pipeline.png)
 5) Click on the Save button to save the pipeline. <br>
 6) Click on the Build Now or Build With Parameters button to build the pipeline. <br>
+    !["Creating_user"](./images/build_now.png)
 7) The parameterized pipelines are already prefilled with default values so you can just click on the build button to start the pipeline. <br>
-8) The pipeline will start and you can see the logs in the console output section. <br>
+    !["Creating_user"](./images/parmeterized.png)
+8) The pipeline will start and you can click build number in the build history to check the build logs. <br>
+    !["Creating_user"](./images/log.png)
 
+<h4> Order to run the Jenkinsfiles:</h4>
+
+1) deploy_s3_buckets
+2) cloud_demo_deployment
+3) non_complaint_asg
+4) set_old_ami_for_deployment
+5) non_complaint_asg
+6) cloud_demo_deployment_destroy
+7) create_patch_policy
+8) delete_patch_policy
 
 <h4>What each Jenkinsfile does:</h4> 
 1) <b>deploy_s3_bucket:</b> This Jenkinsfile is used to deploy an S3 bucket that is required for storing the terraform state files using python3 and boto3. <br>

@@ -3,6 +3,7 @@ Creates SNS notifier topic for the cloud demo project
 """
 
 import logging
+import argparse
 
 import boto3
 
@@ -24,13 +25,13 @@ class CreateSnsNotifier:
     Class responsible for creating a SNS notifier
     """
 
-    def __init__(self, region):
+    def __init__(self, region, email):
         self.region = region
         self.sns_client = boto3.client("sns", region_name=region)
         self.sts_client = boto3.client("sts")
         self.sns_name = "cloud-demo-notifier"
         self.account_id = self.sts_client.get_caller_identity()["Account"]
-        self.email = "srinivas.ravindranath@gwu.edu"
+        self.email = email
 
     def sns_topic_exists(self, topic_arn: str) -> bool:
         """
@@ -112,4 +113,13 @@ class CreateSnsNotifier:
 
 
 if __name__ == "__main__":
-    CreateSnsNotifier(region="us-east-1").setup_sns_notifier()
+    parser = argparse.ArgumentParser(description="Get Jenkins Credentials")
+    parser.add_argument(
+        "--email",
+        type=str,
+        help="email for SNS notifier",
+        required=True,
+        dest="email",
+    )
+    args = parser.parse_args()
+    CreateSnsNotifier(region="us-east-1", email=args.email).setup_sns_notifier()
