@@ -52,7 +52,7 @@ This project demonstrates how we can setup a basic automation using Jenkins, Ter
 
 AWS Architecture Diagram:
 
-!["aws_arch"](./Diagrams/aws_arch.jpg)
+!["aws_arch"](./diagrams/aws_arch.jpg)
 
 <h4> Order to run the Jenkinsfiles:</h4>
 
