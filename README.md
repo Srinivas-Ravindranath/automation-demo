@@ -1,6 +1,69 @@
 # Automation-demo
 
-This project demonstrates how we can setup a basic automation using Jenkins and Terraform on the AWS Cloud
+<h3> Introduction:</h3>
+
+This project demonstrates how we can setup a basic automation using Jenkins, Terraform, python and shell on the AWS Cloud.
+
+**Jenkins**: Jenkins is an open source automation server. It helps automate the parts of software development related to building, testing, and deploying, facilitating continuous integration, and continuous delivery.
+
+**Terraform**: Terraform is an open-source infrastructure as code software tool created by HashiCorp. It enables users to define and provision data center infrastructure using a declarative configuration language known as HashiCorp Configuration Language (HCL).
+
+### File Structure:
+
+**Diagrams:** This directory contains the architecture diagrams for the project.
+- aws_arch.jpg: This diagram shows the architecture of the cloud infrastructure that is deployed using terraform.
+
+**Images:** This directory contains the images that are used in the README.md file.
+
+**Jenkinsfiles:** This directory contains all the Jenkinsfiles that are used for our automation.
+- **cloud_demo_deployment**: This Jenkinsfile is used to deploy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform.
+- **cloud_demo_deployment_destroy**: This Jenkinsfile is used to destroy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform.
+- **create_patch_policy**: This Jenkinsfile is used to create a patch policy for that ensures that the EC2 instances are updated with the latest patches every week at a set maintenance window.
+- **delete_patch_policy**: This Jenkinsfile is used to delete the patch policy that was created using the create_patch_policy Jenkinsfile.
+- **deploy_s3_bucket**: This Jenkinsfile is used to deploy an S3 bucket that is required for storing the terraform state files using python3 and also sets up the SNS notifier.
+- **non_complaint_asg**: This Jenkinsfile is used to check for non-compliant ASG instances and alert the user that the instances are non-compliant and also trigger a deployment job that will make update the instances to be compliant.
+- **set_old_ami_for_deployment**: This Jenkinsfile is used to set the old AMI for the ASG to test whether the non_complaint_asg jenkins job can detect it and update the ASG's.
+
+**Python:** This directory contains the python scripts that are used for checking non complaint asg's and some scripts for deploying some AWS resources.
+- **ASG_Complaince/check_asg.py:** This python script is used to check for non-compliant ASG instances and alert the user that the instances are non-compliant.
+- **JenkinsAPI/jenkins_api.py:** This python script is used to interact with the Jenkins API to trigger the Jenkins jobs.
+- **Logger/logger.py:** This python script is used to create a custom logger that will log the messages to the console.
+- **S3_Bucket_Deployer/deploy_s3_bucket.py:** This python script is used to deploy an S3 bucket that is required for storing the terraform state files using python3.
+- **SNS_Setup/sns_notifier.py:** This python script is used to setup the SNS notifier that will email the user when the ASG instances are non-compliant.
+- 
+**Shell:** This directory contains the shell scripts that are used for the setting up and destroying the infrastructure for Patching EC2 instances.
+- **PatchManager/patch_policy.sh:** This shell script is used to create a patch policy for that ensures that the EC2 instances are updated with the latest patches every week at a set maintenance window.
+- **PatchManager/remove-all-patch-baseline.sh:** This shell script is used to delete all the custom patch baselines created.
+- **PatchManager/remove-all-mw.sh:** This shell script is used to delete all the maintenance windows created.
+- **PatchManager/remove-patch-group.sh:** This shell script is used to delete the patch group created.
+
+**Terraform:** This directory contains the terraform scripts that can used to create the AWS infrastructure.
+- **shell_scripts:** This directory contains the shell script that creates a sample web app on EC2.
+- **alb.tf:** This terraform code is used to create an Application Load Balancer, target groups and Load balancer Listeners.
+- **asg.tf:** This terraform code is used to create an Auto Scaling Group, Launch Configuration and Autoscaling Policies.
+- **backend.tf:** This terraform code is used to configure the backend for the terraform state files.
+- **data.tf:** This terraform code is used to get the account_id for the aws account the resource is being deployed to.
+- **outputs.tf:** This terraform code is used to output the DNS name of the Application Load Balancer.
+- **provider.tf:** This terraform code is used to configure the provider for the terraform code.
+- **sg.tf:** This terraform code is used to create the security groups for the infrastructure being created.
+- **variables.tf:** This terraform code is used to define the variables that are used in the terraform code.
+- **vpc.tf:** This terraform code is used to create the VPC, Subnets, Route Tables, Nat Gateway and Internet Gateway.
+
+
+AWS Architecture Diagram:
+!["aws_arch"](./Diagrams/aws_arch.jpg)
+
+<h4> Order to run the Jenkinsfiles:</h4>
+
+1) deploy_s3_buckets
+2) cloud_demo_deployment
+3) non_complaint_asg
+4) set_old_ami_for_deployment
+5) non_complaint_asg
+6) cloud_demo_deployment_destroy
+7) create_patch_policy
+8) delete_patch_policy
+
 
 <h3>Prerequisites:</h3>
 
@@ -33,14 +96,14 @@ This project demonstrates how we can setup a basic automation using Jenkins and 
 4) Next click on <b>Attach policies directly</b> option and attach the <b>PowerUserAccess</b> policy to the user. <br>
    <b>Note: Attaching poweruserplus access is not the best practise always ensure every service gets only the correct amount 
          permissions. (only use poweruserplus for the demo).</b><br>
-    !["Creating_user"](./images/add_permission.png)
+    !["attach_policy"](./images/add_permission.png)
 5) After attaching the policy go ahead and create the user.
 6) Now click on the newly created user and navigate to the security credentials option and scroll down to find the <b>
    Create Access Key</b> button. <br>
 7) Chose the <b>Command Line Interface</b> and tick the confirmation statement below and click on the next button.
-    !["Creating_user"](./images/creating_access_key.png)
+    !["access_key"](./images/creating_access_key.png)
 8) Click on the download CSV to get the <b>Access Key</b> and <b>Secret Key</b> which we will use for later.
-    !["Creating_user"](./images/download_csv.png)
+    !["download_csv"](./images/download_csv.png)
 9) Run the following command to check aws cli is installed.
    ```
    aws --version
@@ -50,7 +113,7 @@ This project demonstrates how we can setup a basic automation using Jenkins and 
     aws configure
     ```
 11) Enter the Access Key and Secret from the csv file downloaded from the console and use us-east-1 as the default region. <br>
-    !["Creating_user"](./images/configure.png)
+    !["configure"](./images/configure.png)
 12) Run the below query to test if the aws credentials are configured correctly.
 
     ```
@@ -170,14 +233,14 @@ Follow the setup instructions on the browser to complete the setup.
 3) Go to the Github settings and click on the SSH and GPG keys option and click on the new SSH key option. <br>
 4) Paste the copied key in the key section and give a title to the key and click on the add SSH key button. <br>
 5) Now go to the Jenkins dashboard and click on the Manage Jenkins button. <br>
-    !["Creating_user"](./images/manage_jenkins.png)
+    !["manage_jenkins"](./images/manage_jenkins.png)
 6) Click on the Manage Credentials option and click on the global credentials domain. <br>
-    !["Creating_user"](./images/manage_credentials.png)
-    !["Creating_user"](./images/credentials_setup.png)
+    !["manage_credentials"](./images/manage_credentials.png)
+    !["credentials_setup"](./images/credentials_setup.png)
 7) Click on the Add Credentials option and select the SSH Username with private key option. <br>
-    !["Creating_user"](./images/ssh.png)
+    !["ssh"](./images/ssh.png)
 8) Enter the username as <b>GITHUB_ACCESS_KEY</b> and select the private key as the key option and paste the private key in the key section. <br>
-    !["Creating_user"](./images/credentials_ssh.png)
+    !["credentials_ssh"](./images/credentials_ssh.png)
 9) Click on the OK button to save the credentials. <br>
 
 <h4>Setting up Jenkins Credentials</h4> 
@@ -191,36 +254,18 @@ Follow the setup instructions on the browser to complete the setup.
 <h4>Setting up the Jenkins Pipeline</h4> 
 
 1) Click on the New Item option on the Jenkins dashboard. <br>
-    !["Creating_user"](./images/adding_a_jenkins_job.png)
+    !["adding_a_jenkins_job"](./images/adding_a_jenkins_job.png)
 2) Enter the name for the job and select the pipeline option. <br>
-    !["Creating_user"](./images/create_job.png)
+    !["create_job"](./images/create_job.png)
 3) Click on the OK button to create the pipeline. <br>
 4) In the pipeline section, paste one of the Jenkinfiles from the Jenkinsfiles directory. <br>
-    !["Creating_user"](./images/add_pipeline.png)
+    !["add_pipeline"](./images/add_pipeline.png)
 5) Click on the Save button to save the pipeline. <br>
 6) Click on the Build Now or Build With Parameters button to build the pipeline. <br>
-    !["Creating_user"](./images/build_now.png)
+    !["build_now"](./images/build_now.png)
 7) The parameterized pipelines are already prefilled with default values so you can just click on the build button to start the pipeline. <br>
-    !["Creating_user"](./images/parmeterized.png)
-8) The pipeline will start and you can click build number in the build history to check the build logs. <br>
-    !["Creating_user"](./images/log.png)
+    !["parmeterized"](./images/parmeterized.png)
+8) The pipeline will start, and you can click build number in the build history to check the build logs. <br>
+    !["log"](./images/log.png)
 
-<h4> Order to run the Jenkinsfiles:</h4>
 
-1) deploy_s3_buckets
-2) cloud_demo_deployment
-3) non_complaint_asg
-4) set_old_ami_for_deployment
-5) non_complaint_asg
-6) cloud_demo_deployment_destroy
-7) create_patch_policy
-8) delete_patch_policy
-
-<h4>What each Jenkinsfile does:</h4> 
-1) <b>deploy_s3_bucket:</b> This Jenkinsfile is used to deploy an S3 bucket that is required for storing the terraform state files using python3 and boto3. <br>
-2) <b>cloud_demo_deployment:</b> This Jenkinsfile is used to deploy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform. <br>
-3) <b>cloud_demo_deployment_destroy:</b> This Jenkinsfile is used to destroy the cloud infrastructure(infrastructure mentioned in the diagrams->aws_arch.jpg) using terraform. <br>
-4) <b>non_complaint_asg:</b> This Jenkinsfile is used to check for non-compliant ASG instances and alert the user that the instances are non-compliant and also trigger a deployment job that will make update the instances to be compliant. <br>
-5) <b>set_old_ami_for_deployment:</b> This Jenkinsfile is used to set the old AMI for the ASG to test whether the non_complaint_asg jenkins job can detect it and update the ASG's. <br>
-6) <b>create_patch_policy:</b> This Jenkinsfile is used to create a patch policy for that ensures that the EC2 instances are updated with the latest patches every week at a set maintenance window. <br>
-7) <b>delete_patch_policy:</b> This Jenkinsfile is used to delete the patch policy that was created using the create_patch_policy Jenkinsfile. <br>
