@@ -181,6 +181,7 @@ Follow the setup instructions on the browser to complete the setup.
 9) Click on the OK button to save the credentials. <br>
 
 <h4>Setting up Jenkins Credentials</h4> 
+
 1) Now go to the Jenkins dashboard and click on the Manage Jenkins button. <br>
 2) Click on the Manage Credentials option and click on the global credentials domain. <br>
 3) Click on the Add Credentials option and select the Username and password option. <br>
@@ -188,6 +189,7 @@ Follow the setup instructions on the browser to complete the setup.
 5) Click on the OK button to save the credentials.
 
 <h4>Setting up the Jenkins Pipeline</h4> 
+
 1) Click on the New Item option on the Jenkins dashboard. <br>
     !["Creating_user"](./images/adding_a_jenkins_job.png)
 2) Enter the name for the job and select the pipeline option. <br>
