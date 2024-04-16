@@ -50,7 +50,7 @@ This project demonstrates how we can setup a basic automation using Jenkins, Ter
 - **vpc.tf:** This terraform code is used to create the VPC, Subnets, Route Tables, Nat Gateway and Internet Gateway.
 
 
-AWS Architecture Diagram:
+### AWS Architecture Diagram:
 
 !["aws_arch"](./diagrams/aws_arch.jpg)
 
