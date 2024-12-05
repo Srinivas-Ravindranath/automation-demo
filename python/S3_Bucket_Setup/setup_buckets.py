@@ -5,6 +5,7 @@ Not created with terraform as there no place to store state file
 
 import json
 import logging
+import uuid
 
 import boto3
 
@@ -36,7 +37,7 @@ class SetupBuckets:
         the S3 key path
         :return: None
         """
-        bucket_name = "cloud-computing-6907-81-terraform-state-bucket"
+        bucket_name = f"cloud-computing-6907-81-terraform-state-bucket-{uuid.uuid4()}"
 
         try:
             response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
