@@ -1,0 +1,84 @@
+import jenkins.model.*
+import hudson.model.*
+import javaposse.jobdsl.plugin.*
+
+def repoUrl = 'https://github.com/Srinivas-Ravindranath/automation-demo.git'
+def branch = 'main' // Update with your branch name
+
+def jenkinsfilesDir = 'jenkinsfiles'
+
+
+def workspaceDir = new File("/tmp/jenkins-groovy-automation")
+if (!workspaceDir.exists()) workspaceDir.mkdirs()
+
+println "Cloning repository..."
+
+try {
+    def gitCloneCmd = """
+        ls
+    """
+
+    def process = gitCloneCmd.execute()
+    def stdout = new StringBuilder()
+    def stderr = new StringBuilder()
+    process.consumeProcessOutput(stdout, stderr)
+    process.waitFor()
+
+    if (process.exitValue() == 0) {
+        println "Git clone successful:"
+        println stdout.toString()
+    } else {
+        println "Git clone failed with exit code ${process.exitValue()}:"
+        println stderr.toString()
+    }
+} catch (Exception e) {
+    println "An error occurred while executing the git clone command:"
+    println e.message
+    e.printStackTrace()
+    return
+}
+
+def baseDir = new File(workspaceDir, jenkinsfilesDir)
+
+if (!baseDir.exists()) {
+    println "Jenkinsfiles directory not found: ${baseDir}"
+    return
+}
+
+println "Subdirectories in ${baseDir}:"
+baseDir.listFiles()?.findAll { it.isDirectory() }?.each { dir ->
+    println "- ${dir.name}"
+}
+
+baseDir.listFiles()?.findAll { it.isDirectory() }?.each { subDir ->
+    def jobName = subDir.name
+    def jenkinsfile = new File(subDir, "Jenkinsfile")
+
+    if (jenkinsfile.exists()) {
+        println "Processing directory: ${subDir.name}"
+
+
+        def existingJob = Jenkins.instance.getItem(jobName)
+        if (existingJob) {
+            println "Job ${jobName} already exists. Skipping creation."
+            return
+        }
+
+
+        def pipelineScript = jenkinsfile.text
+
+
+        def pipelineJob = Jenkins.instance.createProject(org.jenkinsci.plugins.workflow.job.WorkflowJob, jobName)
+
+
+        pipelineJob.definition = new org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition(pipelineScript, true)
+
+
+        pipelineJob.save()
+        println "Job created: ${jobName}"
+    } else {
+        println "No Jenkinsfile found in: ${subDir}"
+    }
+}
+
+println "All jobs have been created successfully!"
