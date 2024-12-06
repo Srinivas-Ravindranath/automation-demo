@@ -236,12 +236,12 @@ class GetLatestAMI:
                 "No non complaint resources found."
             )
             # Publish to SNS notifier
-            self.sns_client.publish(
-                TopicArn=self.sns_notifier_arn,
-                Subject="AMI compliance report for Auto Scaling Groups",
-                Message="All ASG are running the latest AMI for the specified OS, "
-                "No non complaint resources found.",
-            )
+            # self.sns_client.publish(
+            #     TopicArn=self.sns_notifier_arn,
+            #     Subject="AMI compliance report for Auto Scaling Groups",
+            #     Message="All ASG are running the latest AMI for the specified OS, "
+            #     "No non complaint resources found.",
+            # )
             return
 
         logger.info(
@@ -259,17 +259,17 @@ class GetLatestAMI:
             self.triggered_jobs[asg] = output["url"]
 
         # Publish to SNS notifier
-        self.sns_client.publish(
-            TopicArn=self.sns_notifier_arn,
-            Subject="AMI compliance report for Auto Scaling Groups",
-            Message=f"Non Complaint AMIs found running in the region {self.region}, "
-            f"listing non-complaint ASG below: "
-            f"\n {json.dumps(self.non_complaint_asgs, indent=4, default=str)} \n"
-            f"The jenkins jobs mentioned in the AMI compliance report have been started to update AMI,"
-            f"please approve requests for the terraform deployment to update the ami, "
-            f"the following Jenkins job have been triggered below: "
-            f"\n {json.dumps(self.triggered_jobs, indent=4,default=str)}",
-        )
+        # self.sns_client.publish(
+        #     TopicArn=self.sns_notifier_arn,
+        #     Subject="AMI compliance report for Auto Scaling Groups",
+        #     Message=f"Non Complaint AMIs found running in the region {self.region}, "
+        #     f"listing non-complaint ASG below: "
+        #     f"\n {json.dumps(self.non_complaint_asgs, indent=4, default=str)} \n"
+        #     f"The jenkins jobs mentioned in the AMI compliance report have been started to update AMI,"
+        #     f"please approve requests for the terraform deployment to update the ami, "
+        #     f"the following Jenkins job have been triggered below: "
+        #     f"\n {json.dumps(self.triggered_jobs, indent=4,default=str)}",
+        # )
 
 
 if __name__ == "__main__":
