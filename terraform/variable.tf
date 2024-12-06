@@ -138,7 +138,7 @@ variable "instance_type" {
 
 variable "ssh_key_name" {
   type        = string
-  default     = "srirav"
+  default     = "vockey"
   description = "The SSH key name we need to associate with the EC2 instances we will spin up with the auto scaling group"
 }
 
