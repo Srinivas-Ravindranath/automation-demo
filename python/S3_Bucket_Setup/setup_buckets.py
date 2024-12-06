@@ -5,7 +5,8 @@ Not created with terraform as there no place to store state file
 
 import json
 import logging
-import uuid
+from random import randint
+
 
 import boto3
 
@@ -37,7 +38,7 @@ class SetupBuckets:
         the S3 key path
         :return: None
         """
-        bucket_name = f"cloud-computing-6907-81-terraform-state-bucket-{uuid.uuid4()}"
+        bucket_name = f"cloud-computing-6907-81-terraform-state-bucket-{str(randint(1,100))}"
 
         try:
             response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
