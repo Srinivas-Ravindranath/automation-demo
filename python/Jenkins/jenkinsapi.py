@@ -44,6 +44,7 @@ class JenkinsApi:
         """
         next_build_number = self.jenkins_server.get_job_info(name)["nextBuildNumber"]
         self.jenkins_server.build_job(name, parameters=parameters, token=token)
+        logger.info(f"Build started for {name}, waiting for it to finish...")
         time.sleep(10)
         build_info = self.jenkins_server.get_build_info(name, next_build_number)
         return build_info

@@ -2,3 +2,5 @@ boto3
 colorama
 jenkins
 python-jenkins
+pytest
+moto
