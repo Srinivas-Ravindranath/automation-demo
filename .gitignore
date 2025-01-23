@@ -2,3 +2,6 @@
 */**/__pycache__/
 */**.terraform*
 *.DS_Store
+.venv
+*.pyc
+pytest.ini

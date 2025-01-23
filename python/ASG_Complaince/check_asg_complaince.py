@@ -18,7 +18,7 @@ from typing import Dict
 import boto3
 
 from Logger.formatter import CustomFormatter
-from JenkinsApi.jenkinsapi import JenkinsApi
+from Jenkins.jenkinsapi import JenkinsApi
 
 # Logger setup
 logger = logging.getLogger()

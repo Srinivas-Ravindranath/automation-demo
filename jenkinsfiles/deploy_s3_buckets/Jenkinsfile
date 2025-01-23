@@ -39,7 +39,7 @@ pipeline {
                             pip3 install -r requirements.txt
                             export PYTHONPATH="$PYTHONPATH:$PWD" 
                             python3 S3_Bucket_Setup/setup_buckets.py
-                            python3 SNS_Setup/setup_sns.py --email ${email}
+                            python3 SNS_Setup/create_sns_notifier.py --email ${email}
                         '''
                     }
                 }

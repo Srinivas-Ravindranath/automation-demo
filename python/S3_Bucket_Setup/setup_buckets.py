@@ -5,6 +5,8 @@ Not created with terraform as there no place to store state file
 
 import json
 import logging
+from random import randint
+
 
 import boto3
 
@@ -39,7 +41,7 @@ class SetupBuckets:
         bucket_name = "cloud-computing-6907-81-terraform-state-bucket"
 
         try:
-            response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private")
+            response = self.s3_client.create_bucket(Bucket=bucket_name, ACL="private",CreateBucketConfiguration={"LocationConstraint": self.region})
             if response:
                 logging.info(f"Created bucket {bucket_name} successfully")
 
@@ -63,18 +65,18 @@ class SetupBuckets:
 
         if not "Contents" in s3_object:
             self.s3_client.put_object(ACL="private", Bucket=bucket_name, Key=key)
+            logging.info(
+                "Successfully created bucket and all objects with names:\n%s",
+                json.dumps(
+                    {"bucket_name": bucket_name, "bucket_key_prefix": key},
+                    indent=4,
+                    default=str,
+                ),
+            )
+            return
 
         logging.warning(f"Object key {key} already exists, skipping creation")
 
-        logging.info(
-            "Successfully created bucket and all objects with names:\n%s",
-            json.dumps(
-                {"bucket_name": bucket_name, "bucket_key_prefix": key},
-                indent=4,
-                default=str,
-            ),
-        )
-
 
 if __name__ == "__main__":
-    SetupBuckets("us-east-1").setup_s3_buckets()
+    SetupBuckets("us-west-2").setup_s3_buckets()

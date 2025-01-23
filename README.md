@@ -217,6 +217,49 @@ sudo systemctl status jenkins
 ```
 Follow the setup instructions on the browser to complete the setup.
 
+<h4> Install plugins </h4>
+
+1) Go to the following URL http://localhost:8080/manage/pluginManager/
+2) Click on Available Plugins
+3) Search for the ansicolor plugin and install the plugin 
+4) Restart Jenkins to apply plugin
+
+<H4> Setup allowed scripts </H4>
+
+1) Go to the following Url http://localhost:8080/scriptApproval/
+2) In the Signatures already approved section add these:
+   ```
+    method hudson.model.ItemGroup getItem java.lang.String
+    method hudson.model.Saveable save
+    method java.io.File exists
+    method java.io.File getName
+    method java.io.File isDirectory
+    method java.io.File listFiles
+    method java.io.File mkdirs
+    method java.lang.Process exitValue
+    method java.lang.Process waitFor
+    method java.lang.Throwable printStackTrace
+    method jenkins.model.Jenkins createProject java.lang.Class java.lang.String
+    method org.jenkinsci.plugins.workflow.job.WorkflowJob setDefinition org.jenkinsci.plugins.workflow.flow.FlowDefinition
+    new hudson.plugins.git.BranchSpec java.lang.String
+    new java.io.File java.io.File java.lang.String
+    new java.io.File java.lang.String
+    new org.jenkinsci.plugins.workflow.cps.CpsFlowDefinition java.lang.String boolean
+    staticMethod jenkins.model.Jenkins getInstance
+    staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods eachDir java.io.File groovy.lang.Closure
+    staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String
+    staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods getText java.io.File
+    staticMethod org.codehaus.groovy.runtime.ProcessGroovyMethods consumeProcessOutput java.lang.Process java.lang.Appendable java.lang.Appendable
+   ```
+3) In the Signatures already approved which may have introduced a security vulnerability (recommend clearing) add these:
+    ```
+    new java.io.File java.lang.String
+    staticMethod jenkins.model.Jenkins getInstance
+    staticMethod org.codehaus.groovy.runtime.DefaultGroovyMethods execute java.lang.String
+    ```
+
+
+
 <h3>Setting up the Jenkins Credentials</h3>
 
 <h4>Setting up Github ssh login:</h4>
