@@ -2,7 +2,7 @@ name: Terraform Lint and Security Check
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test" ]
   pull_request:
     branches: [ "main" ]
 
