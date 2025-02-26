@@ -23,6 +23,6 @@ jobs:
         working-directory: 'terraform/'
 
       - name: Run tfsec security scan
-        uses: aquasecurity/tfsec-action@v1  # Use the appropriate version tag
+        uses: aquasecurity/tfsec-action@v1.0.0  # Use the appropriate version tag
         with:
           working-directory: 'terraform/'  # Adjust if your Terraform code is elsewhere
