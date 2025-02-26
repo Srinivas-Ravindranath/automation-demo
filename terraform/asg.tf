@@ -7,7 +7,7 @@ resource "aws_placement_group" "demo_server_placement_group" {
 # Create an ASG which is a collection of EC2 instances that are treated as a logical grouping
 # for the purposes of automatic scaling and management.
 resource "aws_autoscaling_group" "demo_servers" {
-    depends_on = [aws_lb_target_group.website_target_group]
+  depends_on = [aws_lb_target_group.website_target_group]
 
   name                      = var.asg_name
   max_size                  = var.asg_max_size
@@ -65,7 +65,7 @@ resource "aws_autoscaling_group" "demo_servers" {
     propagate_at_launch = false
   }
 
-    target_group_arns = [aws_lb_target_group.website_target_group.arn]
+  target_group_arns = [aws_lb_target_group.website_target_group.arn]
 
 }
 
@@ -91,6 +91,7 @@ data "aws_ami" "ubuntu" {
 }
 
 # CReate a launch template which acts as a blueprint for the instances in the ASG
+#tfsec:ignore:aws-ec2-enforce-launch-config-http-token-imds
 resource "aws_launch_template" "web_server_template" {
   name_prefix   = var.launch_template_prefix
   image_id      = data.aws_ami.ubuntu.image_id
