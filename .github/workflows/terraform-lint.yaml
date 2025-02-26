@@ -19,7 +19,7 @@ jobs:
           terraform_version: '1.5.0'  # or whichever version you prefer
 
       - name: Make lint script executable
-        run: chmod +x shell/lint.sh
+        run: chmod +x shell/Lint/lint.sh
 
       - name: Run lint and security checks
         run: shell_scripts/lint.sh
