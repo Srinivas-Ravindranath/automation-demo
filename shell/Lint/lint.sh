@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
-# Exit immediately if a command exits with a non-zero status
-set -e
+set -euo pipefail
 
 # The folder where your Terraform code lives
 TERRAFORM_DIR="$(git rev-parse --show-toplevel)/terraform"
+
+echo "Terraform directory: $TERRAFORM_DIR"
 
 echo "==> Checking Terraform format..."
 terraform fmt -check -recursive "${TERRAFORM_DIR}"

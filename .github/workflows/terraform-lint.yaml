@@ -2,7 +2,7 @@ name: Terraform Lint and Security Check
 
 on:
   push:
-    branches: [ "main", "test" ]
+    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -16,10 +16,13 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.5.0'  # or whichever version you prefer
+          terraform_version: '1.5.0'  # Adjust as needed
 
-      - name: Make lint script executable
-        run: chmod +x shell/Lint/lint.sh
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: 'terraform/'
 
-      - name: Run lint and security checks
-        run: shell/Lint/lint.sh
+      - name: Run tfsec security scan
+        uses: aquasecurity/tfsec-action@v1  # Use the appropriate version tag
+        with:
+          working-directory: 'terraform/'  # Adjust if your Terraform code is elsewhere
