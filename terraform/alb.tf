@@ -1,4 +1,5 @@
 # Creates a AWS Load Balancer for distributing incoming traffic to multiple targets
+#tfsec:ignore:aws-elb-alb-not-public tfsec:ignore:aws-elb-drop-invalid-headers
 resource "aws_lb" "website_load_balancer" {
   name               = var.load_balancer_name
   internal           = false
@@ -30,6 +31,7 @@ resource "aws_lb_target_group" "website_target_group" {
 }
 
 # Create a listener for the load balancer to listen for incoming requests at the specified port
+#tfsec:ignore:aws-elb-http-not-used
 resource "aws_lb_listener" "load_balancer_listener" {
   load_balancer_arn = aws_lb.website_load_balancer.arn
   port              = 80

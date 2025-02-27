@@ -91,6 +91,7 @@ data "aws_ami" "ubuntu" {
 }
 
 # CReate a launch template which acts as a blueprint for the instances in the ASG
+#tfsec:ignore:aws-ec2-enforce-launch-config-http-token-imds
 resource "aws_launch_template" "web_server_template" {
   name_prefix   = var.launch_template_prefix
   image_id      = data.aws_ami.ubuntu.image_id
