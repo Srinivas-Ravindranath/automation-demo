@@ -16,13 +16,40 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.5.0'  # Adjust as needed
+          terraform_version: '1.5.0'
 
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
         working-directory: 'terraform/'
 
       - name: Run tfsec security scan
-        uses: aquasecurity/tfsec-action@v1.0.0  # Use the appropriate version tag
+        uses: aquasecurity/tfsec-action@v1.0.0
         with:
-          working-directory: 'terraform/'  # Adjust if your Terraform code is elsewhere
+          working_directory: 'terraform/'
+
+  terraform-init-and-plan:
+    needs: lint-and-security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.0'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init and Plan
+        working-directory: 'terraform/'
+        run: |
+          echo "Running terraform init..."
+          terraform init -input=false
+          echo "Running terraform plan..."
+          terraform plan -input=false
