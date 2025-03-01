@@ -2,7 +2,7 @@ name: Terraform Lint and Security Check
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "test" ]
   pull_request:
     branches: [ "main" ]
 
@@ -16,10 +16,66 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: '1.5.0'  # or whichever version you prefer
+          terraform_version: '1.5.0'
 
-      - name: Make lint script executable
-        run: chmod +x shell_scripts/lint.sh
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+        working-directory: 'terraform/'
 
-      - name: Run lint and security checks
-        run: shell_scripts/lint.sh
+      - name: Run tfsec security scan
+        uses: aquasecurity/tfsec-action@v1.0.0
+        with:
+          working_directory: 'terraform/'
+
+  terraform-init-and-plan:
+    needs: lint-and-security
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.0'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1
+
+      - name: Terraform Init and Plan
+        working-directory: 'terraform/'
+        run: |
+          echo "Running terraform init..."
+          terraform init -input=false
+          echo "Running terraform plan..."
+          terraform plan -input=false
+
+  terraform-apply:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    needs: terraform-init-and-plan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v3
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: '1.5.0'
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-east-1  # Adjust as needed
+
+      - name: Terraform Apply
+        working-directory: terraform
+        run: |
+          echo "Running terraform apply..."
+          terraform apply -auto-approve

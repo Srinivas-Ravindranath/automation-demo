@@ -171,6 +171,7 @@ variable "image_details" {
 }
 
 variable "jenkins_job_name" {
-  type = string
+  type        = string
   description = "The name of the jenkins job that built the deployment"
+  default     = "demo-job"
 }
